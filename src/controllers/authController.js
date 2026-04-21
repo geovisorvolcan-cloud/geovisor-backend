@@ -50,7 +50,7 @@ const register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, email, password, role, location, position } = req.body;
+  const { name, email, password, location, position } = req.body;
 
   try {
     const existing = await User.findOne({ email });
@@ -58,7 +58,8 @@ const register = async (req, res) => {
       return res.status(409).json({ error: "Email already registered." });
     }
 
-    const user = await User.create({ name, email, password, role, location, position });
+    // role is intentionally omitted — new users always start as "field" (schema default)
+    const user = await User.create({ name, email, password, location, position });
     const token = signToken(user._id);
 
     res.status(201).json({
