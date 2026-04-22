@@ -8,6 +8,7 @@ const userRoutes = require("./src/routes/user");
 const statusRoutes = require("./src/routes/status");
 const sosRoutes = require("./src/routes/sos");
 const mapRoutes = require("./src/routes/map");
+const adminRoutes = require("./src/routes/admin");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/sos", sosRoutes);
 app.use("/api/map", mapRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
