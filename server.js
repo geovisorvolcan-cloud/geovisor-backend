@@ -9,6 +9,8 @@ const statusRoutes = require("./src/routes/status");
 const sosRoutes = require("./src/routes/sos");
 const mapRoutes = require("./src/routes/map");
 const adminRoutes = require("./src/routes/admin");
+const volcanBulletinRoutes = require("./src/routes/volcanBulletin");
+const { startAlertCron } = require("./src/jobs/alertCron");
 
 const app = express();
 
@@ -40,6 +42,7 @@ app.use("/api/status", statusRoutes);
 app.use("/api/sos", sosRoutes);
 app.use("/api/map", mapRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/volcan-bulletin", volcanBulletinRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -60,4 +63,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Geovisor backend running on port ${PORT}`);
+  startAlertCron();
 });
