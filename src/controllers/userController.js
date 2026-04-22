@@ -49,4 +49,24 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { getProfile, updateProfile };
+// PUT /api/user/location  (protected) — lightweight position-only update
+const updateLocation = async (req, res) => {
+  const { position } = req.body;
+
+  // position must be [lat, lng] or null to clear
+  if (position !== null && position !== undefined) {
+    if (!Array.isArray(position) || position.length !== 2 || position.some((v) => typeof v !== "number")) {
+      return res.status(400).json({ error: "position must be [lat, lng] or null." });
+    }
+  }
+
+  try {
+    await User.findByIdAndUpdate(req.user._id, { position: position ?? undefined });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Update location error:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
+module.exports = { getProfile, updateProfile, updateLocation };
