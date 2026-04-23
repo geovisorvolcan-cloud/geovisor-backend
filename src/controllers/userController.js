@@ -1,5 +1,68 @@
 const User = require("../models/User");
 
+// PUT /api/user/name  (protected)
+const updateName = async (req, res) => {
+  const { name } = req.body;
+  if (!name || typeof name !== "string" || !name.trim()) {
+    return res.status(400).json({ error: "Name is required." });
+  }
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name: name.trim() },
+      { new: true, runValidators: true }
+    ).select("-password");
+    res.json({ id: user._id, name: user.name, email: user.email, role: user.role });
+  } catch (err) {
+    console.error("Update name error:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
+// PUT /api/user/password  (protected)
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "currentPassword and newPassword are required." });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters." });
+  }
+  try {
+    const user = await User.findById(req.user._id);
+    const valid = await user.comparePassword(currentPassword);
+    if (!valid) {
+      return res.status(401).json({ error: "Current password is incorrect." });
+    }
+    user.password = newPassword;
+    await user.save();
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Change password error:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
+// DELETE /api/user/account  (protected)
+const deleteAccount = async (req, res) => {
+  const { password } = req.body;
+  if (!password) {
+    return res.status(400).json({ error: "Password confirmation is required." });
+  }
+  try {
+    const user = await User.findById(req.user._id);
+    const valid = await user.comparePassword(password);
+    if (!valid) {
+      return res.status(401).json({ error: "Password is incorrect." });
+    }
+    await User.findByIdAndDelete(req.user._id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Delete account error:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
 // GET /api/user/profile  (protected)
 const getProfile = async (req, res) => {
   // req.user is set by auth middleware
@@ -69,4 +132,4 @@ const updateLocation = async (req, res) => {
   }
 };
 
-module.exports = { getProfile, updateProfile, updateLocation };
+module.exports = { getProfile, updateProfile, updateLocation, updateName, changePassword, deleteAccount };
