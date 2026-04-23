@@ -14,10 +14,14 @@ const dataPointSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["social", "sgi_geo", "gidco", "mt_acquisition", "seismic_sensor", "field_participant"],
+      enum: ["social", "sgi_geo", "sgi_magnetometry", "sgi_gravimetry", "gidco", "uis_geophysics", "mt_acquisition"],
       required: true,
     },
     label: {
+      type: String,
+      default: undefined,
+    },
+    description: {
       type: String,
       default: undefined,
     },

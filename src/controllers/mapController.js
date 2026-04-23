@@ -13,6 +13,7 @@ const getDataPoints = async (req, res) => {
         position: p.position,
         type: p.type,
         label: p.label,
+        description: p.description,
       }))
     );
   } catch (err) {
