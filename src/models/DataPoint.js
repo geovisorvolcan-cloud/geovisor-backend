@@ -25,6 +25,10 @@ const dataPointSchema = new mongoose.Schema(
       type: String,
       default: undefined,
     },
+    acquired: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

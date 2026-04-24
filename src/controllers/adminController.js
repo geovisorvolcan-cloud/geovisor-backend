@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const { getRecentSosAlerts } = require("./sosController");
 
 // GET /api/admin/users — list all field/office users
 const getUsers = async (req, res) => {
@@ -41,4 +42,4 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, updateUserRole };
+module.exports = { getUsers, updateUserRole, getRecentSosAlerts };
