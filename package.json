@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "import:data-points": "node src/scripts/importDataPointsFromCsv.js"
   },
   "dependencies": {
     "axios": "^1.15.2",
