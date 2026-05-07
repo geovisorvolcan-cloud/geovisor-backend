@@ -279,12 +279,20 @@ async function main() {
         continue;
       }
 
+      const setPayload = { ...point };
+      const updatePayload = {
+        $set: setPayload,
+        $setOnInsert: { acquired: false },
+      };
+
+      if (point.description === undefined) {
+        delete setPayload.description;
+        updatePayload.$unset = { description: "" };
+      }
+
       const result = await DataPoint.updateOne(
         { pointId: point.pointId },
-        {
-          $set: point,
-          $setOnInsert: { acquired: false },
-        },
+        updatePayload,
         { upsert: true, runValidators: true, setDefaultsOnInsert: true }
       );
 
