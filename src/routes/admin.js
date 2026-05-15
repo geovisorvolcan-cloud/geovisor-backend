@@ -13,6 +13,7 @@ const requireAdmin = (req, res, next) => {
 router.get("/users", protect, requireAdmin, getUsers);
 router.put("/users/:id/role", protect, requireAdmin, updateUserRole);
 router.post("/data-points", protect, requireAdmin, createDataPoint);
+router.put("/data-points/:pointId/acquired", protect, requireAdmin, updateDataPointAcquired);
 router.patch("/data-points/:pointId/acquired", protect, requireAdmin, updateDataPointAcquired);
 router.get("/sos-alerts", protect, requireAdmin, getRecentSosAlerts);
 
