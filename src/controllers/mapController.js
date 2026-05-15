@@ -14,6 +14,7 @@ const getDataPoints = async (req, res) => {
         type: p.type,
         label: p.label,
         description: p.description,
+        acquired: p.acquired,
       }))
     );
   } catch (err) {

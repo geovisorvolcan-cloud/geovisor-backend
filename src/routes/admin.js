@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUsers, updateUserRole, getRecentSosAlerts } = require("../controllers/adminController");
+const { getUsers, updateUserRole, createDataPoint, updateDataPointAcquired, getRecentSosAlerts } = require("../controllers/adminController");
 const { protect } = require("../middleware/auth");
 
 const requireAdmin = (req, res, next) => {
@@ -12,6 +12,8 @@ const requireAdmin = (req, res, next) => {
 
 router.get("/users", protect, requireAdmin, getUsers);
 router.put("/users/:id/role", protect, requireAdmin, updateUserRole);
+router.post("/data-points", protect, requireAdmin, createDataPoint);
+router.patch("/data-points/:pointId/acquired", protect, requireAdmin, updateDataPointAcquired);
 router.get("/sos-alerts", protect, requireAdmin, getRecentSosAlerts);
 
 module.exports = router;
