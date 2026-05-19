@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const DataPoint = require("../models/DataPoint");
 const { getRecentSosAlerts } = require("./sosController");
+const { DATA_POINTS } = require("../scripts/seedDataPoints");
 
 const DATA_POINT_TYPES = new Set([
   "social",
@@ -11,6 +12,8 @@ const DATA_POINT_TYPES = new Set([
   "uis_geophysics",
   "mt_acquisition",
 ]);
+
+const SEEDED_DATA_POINTS_BY_ID = new Map(DATA_POINTS.map((point) => [point.pointId, point]));
 
 function serializeDataPoint(point) {
   return {
@@ -127,7 +130,22 @@ const updateDataPointAcquired = async (req, res) => {
       { new: true, runValidators: true }
     ).select("pointId acquired");
 
-    if (!point) return res.status(404).json({ error: "Data point not found." });
+    if (!point) {
+      const seededPoint = SEEDED_DATA_POINTS_BY_ID.get(req.params.pointId);
+      if (!seededPoint) return res.status(404).json({ error: "Data point not found." });
+
+      const { acquired: _seededAcquired, ...pointDefaults } = seededPoint;
+      const createdPoint = await DataPoint.findOneAndUpdate(
+        { pointId: req.params.pointId },
+        {
+          $setOnInsert: pointDefaults,
+          $set: { acquired },
+        },
+        { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
+      ).select("pointId acquired");
+
+      return res.json({ id: createdPoint.pointId, acquired: createdPoint.acquired });
+    }
     res.json({ id: point.pointId, acquired: point.acquired });
   } catch (err) {
     console.error("updateDataPointAcquired error:", err);
