@@ -48,6 +48,17 @@ const getUsers = async (req, res) => {
   }
 };
 
+// GET /api/admin/data-points — list all database-backed data points for admin verification
+const getDataPoints = async (req, res) => {
+  try {
+    const points = await DataPoint.find().sort({ pointId: 1 }).select("-__v");
+    res.json(points.map(serializeDataPoint));
+  } catch (err) {
+    console.error("getDataPoints error:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
 // PUT /api/admin/users/:id/role — change a user's role between field and office
 const updateUserRole = async (req, res) => {
   const { role } = req.body;
@@ -153,4 +164,4 @@ const updateDataPointAcquired = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, updateUserRole, createDataPoint, updateDataPointAcquired, getRecentSosAlerts };
+module.exports = { getUsers, getDataPoints, updateUserRole, createDataPoint, updateDataPointAcquired, getRecentSosAlerts };
